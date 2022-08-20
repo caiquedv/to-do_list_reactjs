@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as C from './App.styles';
 import { AddArea } from "./components/AddArea/AddArea";
+import { ListItem } from "./components/ListItem/ListItem";
 import { Item } from "./types/Item";
 
 const App = () => {
@@ -26,34 +27,42 @@ const App = () => {
 	const handleDoneStatus = (id: number, checked: boolean) => {
 		newList = [...list];
 
-		newList[id - 1].done = checked;
-		setList(newList); //console.log(newList)
+		newList.map((item, index) => {
+			if (item.id === id) {
+				newList[index].done = checked;
+			}
+		});
+		setList(newList);
 	};
 
 	const removeTask = (id: number) => {
 		newList = [...list].filter(item => item.id !== id);
-
 		setList(newList);
 	};
 
-	// Drag and Drop Data <---///////////////////////////////////////////////////////////////////////////
+	// Drag and Drop Data <--/////////////////////////////////////////////////////
 
-	const dragItem = useRef<any>(null);
-	const dragOverItem = useRef<any>(null);
+	const [targetIndex, setTargetIndex] = useState<any>(null);
 
-	const handleSort = () => {
-		let orderList = [...list];
-
-		const draggedItemContent = orderList.splice(dragItem.current, 1)[0];
-
-		orderList.splice(dragOverItem.current, 0, draggedItemContent);
-
-		dragItem.current = null;
-		dragOverItem.current = null;
-
-		setList(orderList);
+	const getTargetIndex = (target: number) => {
+		setTargetIndex(target);
 	};
 
+	const handleSort = (dragItem: number) => {
+		let orderList = [...list];
+
+		if (targetIndex) {
+			const draggedItemContent = orderList.splice(dragItem, 1)[0];
+
+			orderList.splice(targetIndex, 0, draggedItemContent);
+			setList(orderList);
+		}
+		setTargetIndex(null);
+	};
+
+	// useEffect(()=>{ // Ver Lista quando for atualizada
+	// 	console.log(list)
+	// },[list]); 
 
 	return (
 		<C.Container>
@@ -64,25 +73,14 @@ const App = () => {
 					<AddArea onEnter={handleAddTask} />
 
 					{list.map((item, index) =>
-						<C.ContLabel key={index}
-							done={item.done}
-							draggable
-							onDragStart={(e) => (dragItem.current = index)}
-							onDragEnter={(e) => (dragOverItem.current = index)}
-							onDragEnd={handleSort}
-						>
-							<input
-								type="checkbox"
-								checked={item.done}
-								onChange={(e) => handleDoneStatus(item.id, e.target.checked)}
-							/>
-							<span className='task'>{item.name}</span>
-							<input className='removeBox'
-								type="checkbox"
-								onChange={() => removeTask(item.id)}
-							/>
-							<span className='remove'>Remover</span>
-						</C.ContLabel>
+						<ListItem
+							key={index}
+							item={[item, index]}
+							onCheck={handleDoneStatus}
+							remove={removeTask}
+							onDrag={handleSort}
+							onTarget={getTargetIndex}
+						/>
 					)}
 				</form>
 			</C.Area>
