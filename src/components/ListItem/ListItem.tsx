@@ -48,10 +48,10 @@ export const ListItem = ({ item, onCheck, remove, onDrag, onTarget }: Props) => 
         <C.Container
             done={isChecked}
             draggable
-            onDragStart={() => (dragItem.current = index)}
-            onDrop={setTargetIndex}
-            onDragEnd={setDraggedIndex}
-            onDragOver={e => e.preventDefault()}
+            onDragStartCapture={() => (dragItem.current = index)}
+            onDropCapture={setTargetIndex}
+            onDragEndCapture={setDraggedIndex}
+            onDragOverCapture={e => e.preventDefault()}
         >
             <input
                 type="checkbox"
