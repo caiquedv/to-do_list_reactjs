@@ -5,12 +5,18 @@ import { ListItem } from "./components/ListItem/ListItem";
 import { Item } from "./types/Item";
 
 const App = () => {
-	const [list, setList] = useState<Item[]>([
-		{ id: 1, name: 'Comprar o pão na padaria', done: false },
-		{ id: 2, name: 'Comprar um bolo na padaria', done: true },
-	]);
+	const storagedList: any = localStorage.getItem('list');
+
+	const [list, setList] = useState<Item[]>(
+		JSON.parse(storagedList)
+	);
 
 	let newList = [...list];
+
+	const updateList = (arr: Item[]) => {
+		setList(arr);
+		localStorage.setItem("list", JSON.stringify(arr));
+	};
 
 	const handleAddTask = (taskName: string) => {
 		newList.push({
@@ -19,7 +25,7 @@ const App = () => {
 			done: false
 		});
 
-		setList(newList);
+		updateList(newList);
 	};
 
 	const handleDoneStatus = (id: number, checked: boolean) => {
@@ -29,11 +35,12 @@ const App = () => {
 			}
 		});
 
-		setList(newList);
+		updateList(newList);
 	};
 
 	const removeTask = (id: number) => {
-		setList(newList.filter(item => item.id !== id));
+		newList = newList.filter(item => item.id !== id);
+		updateList(newList);
 	};
 
 	// Drag and Drop Data <--/////////////////////////////////////////////////////
@@ -49,7 +56,8 @@ const App = () => {
 			const draggedItemContent = newList.splice(dragItem, 1)[0];
 
 			newList.splice(targetIndex, 0, draggedItemContent);
-			setList(newList)
+
+			updateList(newList);
 		}
 
 		setTargetIndex(null);
