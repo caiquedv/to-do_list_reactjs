@@ -10,11 +10,9 @@ const App = () => {
 		{ id: 2, name: 'Comprar um bolo na padaria', done: true },
 	]);
 
-	let newList: Item[];
+	let newList = [...list];
 
 	const handleAddTask = (taskName: string) => {
-		newList = [...list];
-
 		newList.push({
 			id: list.length + 1,
 			name: taskName,
@@ -25,19 +23,17 @@ const App = () => {
 	};
 
 	const handleDoneStatus = (id: number, checked: boolean) => {
-		newList = [...list];
-
 		newList.map((item, index) => {
 			if (item.id === id) {
 				newList[index].done = checked;
 			}
 		});
+
 		setList(newList);
 	};
 
 	const removeTask = (id: number) => {
-		newList = [...list].filter(item => item.id !== id);
-		setList(newList);
+		setList(newList.filter(item => item.id !== id));
 	};
 
 	// Drag and Drop Data <--/////////////////////////////////////////////////////
@@ -49,19 +45,18 @@ const App = () => {
 	};
 
 	const handleSort = (dragItem: number) => {
-		let orderList = [...list];
+		if (targetIndex !== null) {
+			const draggedItemContent = newList.splice(dragItem, 1)[0];
 
-		if (targetIndex) {
-			const draggedItemContent = orderList.splice(dragItem, 1)[0];
-
-			orderList.splice(targetIndex, 0, draggedItemContent);
-			setList(orderList);
+			newList.splice(targetIndex, 0, draggedItemContent);
+			setList(newList)
 		}
+
 		setTargetIndex(null);
 	};
 
 	// useEffect(()=>{ // Ver Lista quando for atualizada
-	// 	console.log(list)
+	// 	console.log(newList)
 	// },[list]); 
 
 	return (
