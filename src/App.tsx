@@ -74,6 +74,8 @@ const App = () => {
 		setTargetIndex(null);
 	};
 
+	const [helpModal, setHelpModal] = useState<boolean>(false);
+
 	// useEffect(()=>{ // Ver Lista quando for atualizada
 	// 	console.log(newList)
 	// },[list]); 
@@ -82,6 +84,27 @@ const App = () => {
 		<C.Container>
 			<C.Area>
 				<C.Header>Lista de Tarefas</C.Header>
+				<span onClick={()=> setHelpModal(!helpModal)}>Ajuda</span>
+
+				{helpModal &&
+					<div className="help">
+						<span onClick={() => setHelpModal(!helpModal)} id="close">X</span>
+						<ul>
+							<li>
+								Clique em ✔️ ou 🇹 para alternar entre tarefa e texto simples.
+							</li>
+							<li>
+								Clique em <span>+</span> ou tecle enter para adicionar o evento.
+							</li>
+							<li>
+								Você pode mover os itens com o mouse para organizar.
+							</li>
+							<li>
+								Você pode fechar o site e seu trabalho continuará aqui. 
+							</li>
+						</ul>
+					</div>
+				}
 
 				<form onSubmit={e => e.preventDefault()}>
 					<AddArea
