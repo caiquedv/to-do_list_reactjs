@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import * as C from './App.styles';
 import { AddArea } from "./components/AddArea/AddArea";
+import { HelpModal } from "./components/HelpModal/HelpModal";
 import { ListItem } from "./components/ListItem/ListItem";
 import { Item } from "./types/Item";
 
@@ -83,46 +84,31 @@ const App = () => {
 	return (
 		<C.Container>
 			<C.Area>
-				<C.Header>Lista de Tarefas</C.Header>
-				<span onClick={()=> setHelpModal(!helpModal)}>Ajuda</span>
+				<span onClick={() => setHelpModal(!helpModal)}>Ajuda</span>
 
 				{helpModal &&
-					<div className="help">
-						<span onClick={() => setHelpModal(!helpModal)} id="close">X</span>
-						<ul>
-							<li>
-								Clique em ✔️ ou 🇹 para alternar entre tarefa e texto simples.
-							</li>
-							<li>
-								Clique em <span>+</span> ou tecle enter para adicionar o evento.
-							</li>
-							<li>
-								Você pode mover os itens com o mouse para organizar.
-							</li>
-							<li>
-								Você pode fechar o site e seu trabalho continuará aqui. 
-							</li>
-						</ul>
-					</div>
+					<HelpModal close={() => setHelpModal(!helpModal)} />
 				}
 
-				<form onSubmit={e => e.preventDefault()}>
-					<AddArea
-						onEnter={handleAddTask}
-						remove={updateList}
-					/>
-
-					{list.map((item, index) =>
-						<ListItem
-							key={index}
-							item={[item, index]}
-							onCheck={handleDoneStatus}
-							remove={removeTask}
-							onDrag={handleSort}
-							onTarget={getTargetIndex}
+				<section>
+					<form onSubmit={e => e.preventDefault()}>
+						<AddArea
+							onEnter={handleAddTask}
+							remove={updateList}
 						/>
-					)}
-				</form>
+
+						{list.map((item, index) =>
+							<ListItem
+								key={index}
+								item={[item, index]}
+								onCheck={handleDoneStatus}
+								remove={removeTask}
+								onDrag={handleSort}
+								onTarget={getTargetIndex}
+							/>
+						)}
+					</form>
+				</section>
 			</C.Area>
 		</C.Container>
 	);
