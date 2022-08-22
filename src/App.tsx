@@ -5,26 +5,37 @@ import { ListItem } from "./components/ListItem/ListItem";
 import { Item } from "./types/Item";
 
 const App = () => {
-	const storagedList: any = localStorage.getItem('list');
+	if (!localStorage.todolist) localStorage.setItem('todolist', '[]');
+	const storagedList: any = localStorage.getItem('todolist');
+	const parsedList = JSON.parse(storagedList);
 
-	const [list, setList] = useState<Item[]>(
-		JSON.parse(storagedList)
-	);
+	const [list, setList] = useState<Item[]>(parsedList[0] ? parsedList : [
+		{ id: 1, name: 'Compras', text: true },
+		{ id: 2, name: 'Frango com abóbora', done: false },
+		{ id: 3, name: 'Pão com mortadela', done: true }
+	]);
 
 	let newList = [...list];
 
 	const updateList = (arr: Item[]) => {
 		setList(arr);
-		localStorage.setItem("list", JSON.stringify(arr));
+		localStorage.setItem("todolist", JSON.stringify(arr));
 	};
 
-	const handleAddTask = (taskName: string) => {
-		newList.push({
-			id: list.length + 1,
-			name: taskName,
-			done: false
-		});
-
+	const handleAddTask = (taskName: string, taskOrText: boolean) => {
+		if (!taskOrText) {
+			newList.push({
+				id: list.length + 1,
+				name: taskName,
+				done: false,
+			});
+		} else {
+			newList.push({
+				id: list.length + 1,
+				name: taskName,
+				text: taskOrText
+			});
+		}
 		updateList(newList);
 	};
 
@@ -73,7 +84,10 @@ const App = () => {
 				<C.Header>Lista de Tarefas</C.Header>
 
 				<form onSubmit={e => e.preventDefault()}>
-					<AddArea onEnter={handleAddTask} />
+					<AddArea
+						onEnter={handleAddTask}
+						remove={updateList}
+					/>
 
 					{list.map((item, index) =>
 						<ListItem

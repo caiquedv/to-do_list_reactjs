@@ -2,9 +2,10 @@ import styled from "styled-components";
 
 interface ContainerProps {
     done: boolean;
+    task: boolean | undefined;
 }
 
-export const Container = styled.label(({ done }: ContainerProps) => (`
+export const Container = styled.label(({ done, task }: ContainerProps) => (`
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -15,32 +16,20 @@ export const Container = styled.label(({ done }: ContainerProps) => (`
     color: #ccc;
     position: relative;
 
-    span:not(.remove) {
-        text-decoration: ${done ? 'line-through' : 'initial'};
-    }
-
     .task {
-        width: 70%
+        text-decoration: ${done && !task ? 'line-through' : 'initial'};
+        width: 70%;
+        font-weight: ${task ? 'bold' : 'normal'};
     }
     
-    .removeBox {
-        z-index: 1;
-        width: 70px;
-        height: 100%;
-        position: absolute;
-        right: 10px;
-        appearance: none;
-        cursor: pointer;
-        // background: red;
-
-        &:hover + .remove {
-            color: #666;            
-        }
-    }
-
     .remove {
         position: absolute;
         right: 10px;
-        color: #444;        
+        color: #444;   
+        cursor: pointer;
+        
+        &:hover {
+            color: #666;
+        }
     }
 `))
